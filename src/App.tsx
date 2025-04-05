@@ -12,6 +12,7 @@ import Chatbot from "./pages/Chatbot";
 import HomeRemedies from "./pages/HomeRemedies";
 import RemedyDetail from "./pages/RemedyDetail";
 import NotFound from "./pages/NotFound";
+import Placeholder from "./pages/Placeholder";
 
 const queryClient = new QueryClient();
 
