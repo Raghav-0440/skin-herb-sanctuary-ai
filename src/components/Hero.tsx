@@ -1,4 +1,3 @@
-
 import { Search } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
@@ -13,7 +12,7 @@ const Hero = () => {
   };
 
   return (
-    <div className="flex flex-col md:flex-row w-full py-12 px-6 md:px-10 gap-8">
+    <div className="flex flex-col md:flex-row w-full py-12 px-6 md:px-10 gap-8 mt-8">
       <div className="flex-1 flex flex-col justify-center">
         <div className="inline-block bg-[#222] rounded-full px-4 py-2 mb-4">
           <span className="text-sm text-herb">🌿 GreenVerse</span>
@@ -51,14 +50,14 @@ const Hero = () => {
         </Link>
       </div>
 
-      <div className="flex-1 flex items-center justify-center">
+      <div className="flex-1 flex items-center justify-center mt-8 md:mt-0">
         <div className="relative w-full max-w-md aspect-square">
-          <div className="absolute top-0 right-0 bg-[#222222] rounded-lg px-3 py-1 text-xs text-herb z-10">
+          <div className="absolute top-0 right-0 bg-[#222222] rounded-lg px-3 py-1 text-xs text-herb z-20">
             3D Model
           </div>
           <div className="w-full h-full rounded-xl overflow-hidden border border-[#333] animate-float">
             <img
-              src="/lovable-uploads/0a089a6a-f3e1-4861-89ac-b027e57a0af1.png"
+              src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?q=80&w=600&auto=format&fit=crop"
               alt="3D Garden Model"
               className="w-full h-full object-cover"
             />
