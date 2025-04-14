@@ -3,9 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, Clock, Star, AlertCircle } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-
-// Import the remedies data
-import { remediesData } from "./HomeRemedies";
+import { homeRemedies } from "../data/homeRemediesData";
 
 const RemedyDetail = () => {
   const { id } = useParams();
@@ -15,7 +13,7 @@ const RemedyDetail = () => {
   useEffect(() => {
     // Simulate loading
     const timer = setTimeout(() => {
-      const foundRemedy = remediesData.find((r) => r.id === id);
+      const foundRemedy = homeRemedies.find((r) => r.id === parseInt(id));
       setRemedy(foundRemedy);
       setIsLoading(false);
     }, 500);
@@ -81,24 +79,24 @@ const RemedyDetail = () => {
             <div className="h-64 md:h-80 overflow-hidden">
               <img
                 src={remedy.image}
-                alt={remedy.title}
+                alt={remedy.name}
                 className="w-full h-full object-cover"
               />
             </div>
             
             <div className="p-6">
               <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">
-                {remedy.title}
+                {remedy.name}
               </h1>
               
               <div className="flex items-center gap-4 mb-4">
                 <div className="flex items-center gap-1 text-gray-400 text-sm">
                   <Clock className="h-4 w-4 text-herb" />
-                  <span>Prep: {remedy.time}</span>
+                  <span>Prep: 15 min</span>
                 </div>
                 <div className="flex items-center gap-1 text-gray-400 text-sm">
                   <Star className="h-4 w-4 text-yellow-500" />
-                  <span>{remedy.rating} / 5.0</span>
+                  <span>4.8 / 5.0</span>
                 </div>
               </div>
               
@@ -107,7 +105,7 @@ const RemedyDetail = () => {
               </p>
               
               <div className="flex flex-wrap gap-2 mb-6">
-                {remedy.tags.map((tag, i) => (
+                {remedy.category.map((tag, i) => (
                   <span
                     key={i}
                     className="bg-white/5 text-gray-300 text-xs px-3 py-1 rounded-full"
@@ -132,23 +130,28 @@ const RemedyDetail = () => {
                 
                 <div className="bg-white/5 p-4 rounded-lg">
                   <h2 className="text-lg font-semibold text-white mb-3">Instructions</h2>
-                  <p className="text-gray-300 text-sm">{remedy.instructions}</p>
+                  <ol className="space-y-2">
+                    {remedy.instructions.map((instruction, i) => (
+                      <li key={i} className="text-gray-300 text-sm flex items-start">
+                        <span className="text-herb mr-2">{i + 1}.</span>
+                        {instruction}
+                      </li>
+                    ))}
+                  </ol>
                 </div>
               </div>
               
-              {remedy.tips && (
-                <div className="bg-white/5 p-4 rounded-lg mb-6">
-                  <h2 className="text-lg font-semibold text-white mb-3">Tips & Tricks</h2>
-                  <ul className="space-y-3">
-                    {remedy.tips.map((tip, i) => (
-                      <li key={i} className="text-gray-300 text-sm flex items-start">
-                        <AlertCircle className="h-4 w-4 text-herb mr-2 flex-shrink-0 mt-0.5" />
-                        <span>{tip}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
+              <div className="bg-white/5 p-4 rounded-lg mb-6">
+                <h2 className="text-lg font-semibold text-white mb-3">Benefits</h2>
+                <ul className="space-y-3">
+                  {remedy.benefits.map((benefit, i) => (
+                    <li key={i} className="text-gray-300 text-sm flex items-start">
+                      <AlertCircle className="h-4 w-4 text-herb mr-2 flex-shrink-0 mt-0.5" />
+                      <span>{benefit}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           </div>
         </div>

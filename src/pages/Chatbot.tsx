@@ -57,10 +57,10 @@ const Chatbot = () => {
 
     // Simulate bot response delay
     setTimeout(() => {
-      const botResponse = generateBotResponse(text.trim());
+      const botResponse = generateBotResponse(text.trim(), messages);
       setMessages((prev) => [...prev, botResponse]);
       setIsTyping(false);
-    }, 1000 + Math.random() * 1000); // Random delay between 1-2 seconds
+    }, 1000 + Math.random() * 1000);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -70,26 +70,170 @@ const Chatbot = () => {
     }
   };
 
-  // Simple mock response generator
-  const generateBotResponse = (query: string): Message => {
-    const lowerQuery = query.toLowerCase();
-    let response = "";
+  // Helper function to extract multiple concerns from a user message
+  const extractConcerns = (message: string): string[] => {
+    const concerns: string[] = [];
+    const lowerMessage = message.toLowerCase();
+    
+    // Common skin concerns with variations
+    const skinConcerns = {
+      acne: ['acne', 'pimple', 'breakout', 'zit', 'blackhead', 'whitehead'],
+      darkCircles: ['dark circle', 'under eye', 'eye bag', 'dark under eye'],
+      drySkin: ['dry skin', 'dryness', 'flaky', 'tightness', 'dehydrated'],
+      eczema: ['eczema', 'dermatitis', 'rash', 'itchy skin'],
+      psoriasis: ['psoriasis', 'scaly skin', 'flaky skin'],
+      inflammation: ['inflammation', 'redness', 'irritation', 'swelling'],
+      aging: ['aging', 'wrinkle', 'fine line', 'anti-aging', 'age spot'],
+      rosacea: ['rosacea', 'redness', 'flushing'],
+      hyperpigmentation: ['dark spot', 'hyperpigmentation', 'uneven tone']
+    };
+    
+    // Check for each concern with improved matching
+    Object.entries(skinConcerns).forEach(([concern, keywords]) => {
+      if (keywords.some(keyword => lowerMessage.includes(keyword))) {
+        concerns.push(concern);
+      }
+    });
+    
+    // Common ingredients with variations
+    const ingredients = {
+      neem: ['neem', 'azadirachta'],
+      aloe: ['aloe', 'aloe vera'],
+      teaTree: ['tea tree', 'melaleuca'],
+      turmeric: ['turmeric', 'curcumin'],
+      honey: ['honey', 'manuka'],
+      vitaminC: ['vitamin c', 'ascorbic acid'],
+      niacinamide: ['niacinamide', 'vitamin b3'],
+      retinol: ['retinol', 'retinoid'],
+      hyaluronic: ['hyaluronic acid', 'hyaluronan']
+    };
+    
+    // Check for ingredients
+    Object.entries(ingredients).forEach(([ingredient, variations]) => {
+      if (variations.some(variation => lowerMessage.includes(variation))) {
+        concerns.push(ingredient);
+      }
+    });
+    
+    // Check for treatment-related keywords
+    if (lowerMessage.includes('treatment') || lowerMessage.includes('remedy') || 
+        lowerMessage.includes('mask') || lowerMessage.includes('routine')) {
+      concerns.push('treatment');
+    }
+    
+    return concerns;
+  };
 
-    if (lowerQuery.includes("acne")) {
-      response = "For acne treatment, herbs like Tea Tree, Neem, and Turmeric can be very effective. Tea tree oil has antimicrobial properties that help fight bacteria causing acne, while Neem helps reduce inflammation and Turmeric is known for its antiseptic qualities. Would you like to learn more about any of these herbs?";
-    } else if (lowerQuery.includes("dark circles") || lowerQuery.includes("under eye")) {
-      response = "For dark circles, consider herbs like Cucumber, Chamomile, and Green Tea. These herbs have cooling properties that help reduce puffiness and brighten the under-eye area. Regular application of cold Chamomile tea bags can also help reduce dark circles over time.";
-    } else if (lowerQuery.includes("dry skin") || lowerQuery.includes("dryness")) {
-      response = "For dry skin, Aloe Vera, Calendula, and Evening Primrose are excellent herbs. Aloe provides deep hydration, Calendula helps repair the skin barrier, and Evening Primrose oil is rich in essential fatty acids that nourish dry skin. I recommend creating a hydrating mask with Aloe Vera gel mixed with a few drops of Jojoba oil for deep moisturizing.";
-    } else if (lowerQuery.includes("eczema") || lowerQuery.includes("psoriasis")) {
-      response = "For conditions like eczema and psoriasis, gentle herbs like Oatmeal, Calendula, and Chamomile can provide relief. These herbs have anti-inflammatory properties that soothe irritated skin. A bath with colloidal oatmeal can be particularly soothing during flare-ups.";
-    } else {
-      response = "Thank you for your question about skincare. To provide you with the most helpful information, could you share more details about your specific skin concern or the type of remedy you're looking for? I can suggest herbs for various conditions like acne, dry skin, aging, or specific issues like dark spots.";
+  // Helper function to format response in points
+  const formatResponse = (points: string[]): string => {
+    return points.map(point => {
+      if (point.trim() === '') return '';
+      return `• ${point}`;
+    }).join('\n');
+  };
+
+  // Simple mock response generator
+  const generateBotResponse = (query: string, previousMessages: Message[] = []): Message => {
+    const lowerQuery = query.toLowerCase();
+    const responses: string[] = [];
+    
+    // Get context from previous messages
+    const context = previousMessages.map(m => m.text).join(' ');
+    
+    // Extract concerns from the query and context
+    const concerns = extractConcerns(query + ' ' + context);
+    
+    // Check if user mentioned previous treatments didn't work
+    const previousTreatmentsFailed = context.includes("didn't work") || context.includes("didnt work");
+    
+    // Handle questions about herbs for specific conditions
+    if (lowerQuery.includes("herbs") && lowerQuery.includes("acne")) {
+      responses.push("Here are effective herbs for acne treatment:\n\n" + 
+        formatResponse([
+          "Tea Tree Oil: Powerful antibacterial and anti-inflammatory properties",
+          "Neem: Natural antiseptic and anti-inflammatory herb",
+          "Turmeric: Reduces inflammation and prevents breakouts",
+          "Aloe Vera: Soothes irritation and promotes healing",
+          "Green Tea: Rich in antioxidants and reduces inflammation",
+          "Honey: Natural antibacterial and healing properties",
+          "Chamomile: Calms redness and irritation",
+          "Lavender: Balances oil production and reduces inflammation",
+          "Basil: Natural antibacterial and anti-inflammatory",
+          "Mint: Soothes irritation and controls oil production"
+        ]));
+    }
+    
+    // Handle specific symptoms and failed treatments
+    else if (concerns.includes("acne") && (context.includes("redness") || context.includes("itching"))) {
+      if (previousTreatmentsFailed) {
+        responses.push("Since neem didn't work for your acne with redness and itching, here are alternative approaches:\n\n" + 
+          formatResponse([
+            "For Redness and Itching:",
+            "Aloe Vera Gel: Apply fresh gel directly to soothe irritation",
+            "Chamomile Tea: Use cooled tea as a toner to calm redness",
+            "Honey Mask: Apply raw honey for 15 minutes to reduce inflammation",
+            "",
+            "Alternative Acne Treatments:",
+            "Tea Tree Oil: Dilute with coconut oil (1:10 ratio), apply twice daily",
+            "Turmeric Mask: Mix with honey, apply for 15 minutes",
+            "Green Tea Toner: Brew strong tea, cool, and apply with cotton pad",
+            "",
+            "General Care:",
+            "Use gentle, fragrance-free cleanser",
+            "Apply treatments with clean hands",
+            "Moisturize with non-comedogenic products",
+            "Avoid touching or picking at acne",
+            "Stay hydrated and maintain a healthy diet"
+          ]));
+      } else {
+        responses.push("For acne with redness and itching, here are recommended herbal treatments:\n\n" + 
+          formatResponse([
+            "Primary Treatments:",
+            "Aloe Vera: Apply fresh gel to soothe irritation",
+            "Chamomile: Use as a toner to calm redness",
+            "Tea Tree Oil: Dilute with carrier oil for spot treatment",
+            "",
+            "Supporting Care:",
+            "Use gentle, non-irritating cleanser",
+            "Apply treatments with clean hands",
+            "Moisturize with non-comedogenic products",
+            "Avoid touching or picking at acne",
+            "Stay hydrated and maintain a healthy diet"
+          ]));
+      }
+    }
+    
+    // Handle general questions about remedies
+    else if (lowerQuery.includes("remedies")) {
+      responses.push("Here are natural remedies for common skin concerns:\n\n" + 
+        formatResponse([
+          "Acne Treatment: Tea tree oil, neem, turmeric, aloe vera, honey",
+          "Dark Circles: Cucumber, potato, rose water, almond oil",
+          "Inflammation: Aloe vera, chamomile, green tea, cucumber",
+          "Dry Skin: Coconut oil, honey, avocado, oatmeal",
+          "Eczema: Oatmeal, coconut oil, aloe vera, chamomile",
+          "Anti-Aging: Green tea, aloe vera, honey, rose water",
+          "Sun Protection: Aloe vera, green tea, coconut oil",
+          "Scar Reduction: Aloe vera, honey, coconut oil",
+          "Oil Control: Tea tree oil, aloe vera, green tea",
+          "Sensitive Skin: Chamomile, aloe vera, coconut oil"
+        ]));
+    }
+    
+    else {
+      responses.push("To provide you with the most relevant advice, please share:\n\n" + 
+        formatResponse([
+          "Your specific skin concern (acne, dryness, inflammation, etc.)",
+          "Current symptoms you're experiencing",
+          "Previous treatments you've tried",
+          "Any allergies or sensitivities",
+          "Your current skincare routine"
+        ]));
     }
 
     return {
       id: (Date.now() + 1).toString(),
-      text: response,
+      text: responses.join("\n\n"),
       sender: "bot",
       timestamp: new Date(),
     };
@@ -134,7 +278,7 @@ const Chatbot = () => {
                       )}
                       <div>
                         <div
-                          className={`rounded-2xl px-4 py-2 text-sm ${
+                          className={`rounded-2xl px-4 py-2 text-sm whitespace-pre-line ${
                             message.sender === "user"
                               ? "bg-herb text-herb-foreground"
                               : "bg-[#1a1a1a] text-white border border-[#333]"
