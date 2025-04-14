@@ -1,19 +1,20 @@
 import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
 import { plantsData } from '@/data/plantsData';
 import PlantBasic from '@/components/PlantBasic';
 import PlantMedicinal from '@/components/PlantMedicinal';
 import PlantBenefits from '@/components/PlantBenefits';
 import PlantVisuals from '@/components/PlantVisuals';
+import { ArrowLeft } from 'lucide-react';
 
 const PlantDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [showAyushModal, setShowAyushModal] = useState(false);
   const [showHealthModal, setShowHealthModal] = useState(false);
 
-  const plant = id ? plantsData[id] : null;
+  // Find the plant by ID in the plantsData object
+  const plant = id ? Object.values(plantsData).find(p => p.id === parseInt(id)) : null;
 
   if (!plant) {
     return (
@@ -22,7 +23,6 @@ const PlantDetail: React.FC = () => {
         <main className="container mx-auto py-8 px-4">
           <h1 className="text-3xl font-bold text-center">Plant not found</h1>
         </main>
-        <Footer />
       </div>
     );
   }
@@ -30,7 +30,18 @@ const PlantDetail: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#111] text-white">
       <Navbar />
-      <main className="container mx-auto py-6 px-2 pt-12">
+      <main className="container mx-auto py-6 px-6 pt-24">
+        {/* Back to Plants Button */}
+        <div className="mb-10 px-4">
+          <Link 
+            to="/explore" 
+            className="inline-flex items-center gap-2 text-herb hover:text-herb-dark transition-colors"
+          >
+            <ArrowLeft size={20} />
+            <span>Back to Plants</span>
+          </Link>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Left Section - Plant Basics */}
           <div>
@@ -45,8 +56,8 @@ const PlantDetail: React.FC = () => {
 
           {/* Middle Section - Plant Header & Visuals */}
           <div className="flex flex-col items-center">
-            <div className="mb-4 text-center">
-              <h1 className="text-3xl font-bold mb-1">{plant.name}</h1>
+            <div className="mb-16 text-center">
+              <h1 className="text-3xl font-bold mb-2">{plant.name}</h1>
               <p className="text-gray-400 italic">{plant.scientificName}</p>
             </div>
             <PlantVisuals
@@ -83,16 +94,14 @@ const PlantDetail: React.FC = () => {
               </div>
               
               <div className="space-y-4">
-                {Object.entries(plant.ayushApplications).map(([system, application]) => (
-                  application ? (
-                    <div key={system} className="w-full h-max mt-5 border border-[#333] relative rounded-lg p-5">
-                      <div className="text-green-500 text-xs px-3 rounded-full absolute -top-3 left-5 bg-[#1a1a1a]">
-                        {system.charAt(0).toUpperCase() + system.slice(1)}
-                      </div>
-                      <p className="text-white">{application}</p>
+                {plant.ayushApplications.map((application, index) => (
+                  <div key={index} className="w-full h-max mt-5 border border-[#333] relative rounded-lg p-5">
+                    <div className="text-green-500 text-xs px-3 rounded-full absolute -top-3 left-5 bg-[#1a1a1a]">
+                      AYUSH Application
                     </div>
-                  ) : null
-                )).filter(Boolean)}
+                    <p className="text-white">{application}</p>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -126,7 +135,6 @@ const PlantDetail: React.FC = () => {
           </div>
         )}
       </main>
-      <Footer />
     </div>
   );
 };

@@ -76,8 +76,9 @@ const PlantMedicinal: React.FC<PlantMedicinalProps> = ({
 
 const PlantPart = ({ icon, text }) => {
   return (
-    <div className="glassmorphism text-white text-[13px] px-4 py-2 hover:text-black hover:bg-white cursor-pointer rounded-full">
-      {icon} {text}
+    <div className="glassmorphism text-white text-[13px] px-4 py-2 hover:text-black hover:bg-white cursor-pointer rounded-full flex items-center">
+      {icon}
+      <span className="ml-1">{text}</span>
     </div>
   );
 };
@@ -90,4 +91,4 @@ const ActiveCompoundBadge = ({ text }) => {
   );
 };
 
-export default PlantMedicinal; 
+export default PlantMedicinal;

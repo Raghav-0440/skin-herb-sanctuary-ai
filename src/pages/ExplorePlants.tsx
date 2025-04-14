@@ -7,24 +7,51 @@ import Footer from '@/components/Footer';
 
 const categories = [
   'All',
-  'General Skincare',
-  'Acne',
-  'Eczema',
-  'Psoriasis',
-  'Burns & Wounds',
-  'Skin Allergies',
-  'Complexion',
-  'Other'
+  'Skin Cleansing',
+  'Detoxification',
+  'Anti-aging',
+  'Acne Control',
+  'Skin Tightening',
+  'Skin Conditioning',
+  'Emollient',
+  'Softening',
+  'Smoothing',
+  'Antioxidant',
+  'Hyperpigmentation',
+  'Skin Brightening',
+  'Antimicrobial',
+  'Anti-inflammatory',
+  'Skin Diseases',
+  'Scabies',
+  'Ringworm',
+  'Vitiligo',
+  'Healing',
+  'Scar Reduction',
+  'Hydration',
+  'Pigmentation Reduction',
+  'Psoriasis Relief',
+  'Eczema Relief',
+  'Skin Barrier Strengthening',
+  'Inflammation Reduction',
+  'Antibacterial',
+  'Skin Purification',
+  'Wound Healing',
+  'Sensitive Skin Care',
+  'Radiance Enhancement',
+  'Complexion Improvement',
+  'Cooling Effect',
+  'Brightening Effect'
 ];
 
 export default function ExplorePlants() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   const filteredPlants = Object.values(plantsData).filter(plant => {
     const matchesSearch = plant.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      plant.scientificName.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = selectedCategory === 'All' || plant.category === selectedCategory;
+                         plant.scientificName.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = selectedCategory === 'All' || selectedCategory === null || 
+                          plant.category.includes(selectedCategory);
     return matchesSearch && matchesCategory;
   });
 
@@ -37,31 +64,34 @@ export default function ExplorePlants() {
           Discover traditional herbs and plants used in skincare and healing
         </p>
 
-        <div className="flex flex-col md:flex-row gap-6 mb-8">
-          <div className="relative flex-1">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+        <div className="max-w-4xl mx-auto mb-12">
+          <div className="relative mb-8">
             <input
               type="text"
               placeholder="Search plants..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 bg-[#1a1a1a] rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full bg-[#1a1a1a] text-white px-4 py-3 pl-12 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
             />
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
           </div>
-          <div className="flex gap-4 overflow-x-auto pb-2">
-            {categories.map((category) => (
-              <button
-                key={category}
-                onClick={() => setSelectedCategory(category)}
-                className={`px-4 py-2 rounded-full whitespace-nowrap ${
-                  selectedCategory === category
-                    ? 'bg-green-500 text-white'
-                    : 'bg-[#1a1a1a] text-gray-300 hover:bg-[#2a2a2a]'
-                }`}
-              >
-                {category}
-              </button>
-            ))}
+
+          <div className="overflow-x-auto pb-4 -mx-4 px-4">
+            <div className="flex gap-3 min-w-max">
+              {categories.map((category) => (
+                <button
+                  key={category}
+                  onClick={() => setSelectedCategory(category)}
+                  className={`px-4 py-2 rounded-full text-sm whitespace-nowrap transition-colors ${
+                    selectedCategory === category
+                      ? 'bg-primary text-white'
+                      : 'bg-[#1a1a1a] text-gray-400 hover:bg-[#2a2a2a]'
+                  }`}
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -82,10 +112,12 @@ export default function ExplorePlants() {
               <div className="p-6">
                 <h3 className="text-xl font-semibold mb-2">{plant.name}</h3>
                 <p className="text-gray-400 text-sm italic mb-4">{plant.scientificName}</p>
-                <div className="flex items-center gap-2">
-                  <span className="px-3 py-1 bg-[#2a2a2a] rounded-full text-sm">
-                    {plant.category}
-                  </span>
+                <div className="flex flex-wrap gap-2">
+                  {plant.category.map((cat, index) => (
+                    <span key={index} className="px-3 py-1 bg-[#2a2a2a] rounded-full text-sm">
+                      {cat}
+                    </span>
+                  ))}
                 </div>
               </div>
             </Link>

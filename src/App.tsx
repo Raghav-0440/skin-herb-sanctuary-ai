@@ -12,6 +12,7 @@ import HomeRemedies from "./pages/HomeRemedies";
 import RemedyDetail from "./pages/RemedyDetail";
 import NotFound from "./pages/NotFound";
 import Placeholder from "./pages/Placeholder";
+import HerbalChat from "./pages/HerbalChat";
 
 const queryClient = new QueryClient();
 
@@ -30,6 +31,7 @@ const App = () => {
             <Route path="/remedies" element={<HomeRemedies />} />
             <Route path="/remedies/:id" element={<RemedyDetail />} />
             <Route path="/chatbot" element={<Chatbot />} />
+            <Route path="/herbal-chat" element={<HerbalChat />} />
             <Route path="/get-started" element={<Placeholder />} />
             <Route path="/search" element={<Placeholder />} />
             <Route path="*" element={<NotFound />} />

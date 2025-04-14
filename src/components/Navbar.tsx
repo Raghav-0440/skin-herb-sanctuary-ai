@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { SearchIcon, Menu, X } from "lucide-react";
@@ -57,7 +56,7 @@ const Navbar = () => {
               </svg>
             </div>
             <span className="text-xl font-bold text-white">
-              <span className="text-herb">Herb</span>Sanctuary
+              <span className="text-herb">Skin</span>Gardenia
             </span>
           </Link>
         </div>
@@ -104,14 +103,14 @@ const Navbar = () => {
             Home Remedies
           </Link>
           <Link 
-            to="/chatbot" 
+            to="/herbal-chat" 
             className={`text-sm font-medium transition-colors ${
-              isActive("/chatbot") 
+              isActive("/herbal-chat") 
                 ? "text-herb" 
                 : "text-white/80 hover:text-herb"
             }`}
           >
-            Chatbot
+            Herbal Expert
           </Link>
         </div>
 
@@ -190,15 +189,15 @@ const Navbar = () => {
               Home Remedies
             </Link>
             <Link 
-              to="/chatbot" 
+              to="/herbal-chat" 
               className={`text-sm font-medium transition-colors ${
-                isActive("/chatbot") 
+                isActive("/herbal-chat") 
                   ? "text-herb" 
                   : "text-white/80 hover:text-herb"
               }`}
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              Chatbot
+              Herbal Expert
             </Link>
             <Link 
               to="/get-started" 

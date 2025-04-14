@@ -14,19 +14,15 @@ const Hero = () => {
   return (
     <div className="flex flex-col md:flex-row w-full py-12 px-6 md:px-10 gap-8 mt-8">
       <div className="flex-1 flex flex-col justify-center">
-        <div className="inline-block bg-[#222] rounded-full px-4 py-2 mb-4">
-          <span className="text-sm text-herb">🌿 GreenVerse</span>
-        </div>
         <h1 className="text-5xl md:text-6xl font-bold mb-4">
-          <span className="text-herb">Niroha</span>
+          <span className="text-herb">Floriva!</span>
         </h1>
         <h2 className="text-3xl md:text-4xl font-bold mb-6 text-white">
-          Discover the Healing Power of Nature!
+          Nature's Touch for Healthier Skin!
         </h2>
         <p className="text-lg md:text-xl mb-8 text-gray-300">
-          Explore a Virtual Herbal Garden and{" "}
-          <span className="text-herb">Uncover the Secrets</span> of Ancient
-          Healing Practices.
+          Wander through a Virtual Herbal Garden and{" "}
+          <span className="text-herb">Uncover Timeless</span> Skincare Remedies.
         </p>
 
         <form onSubmit={handleSearch} className="relative mb-8 max-w-md">

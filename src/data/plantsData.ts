@@ -1,7 +1,10 @@
-interface PlantInfo {
-  id: string;
+export interface PlantInfo {
+  id: number;
   name: string;
   scientificName: string;
+  category: string[];
+  image: string;
+  description: string;
   size: string;
   nativeRegion: string;
   climate: string;
@@ -11,488 +14,370 @@ interface PlantInfo {
   activeCompounds: string[];
   therapeuticProperties: string[];
   dosageForms: string[];
-  ayushApplications: {
-    ayurveda?: string;
-    unani?: string;
-    siddha?: string;
-  };
+  ayushApplications: string[];
   healthBenefits: string[];
-  image: string;
-  category: string;
 }
 
 export const plantsData: Record<string, PlantInfo> = {
-  "1": {
-    id: "1",
-    name: "Aloe Vera",
-    scientificName: "Aloe barbadensis",
-    size: "24–39 inches tall",
-    nativeRegion: "Arabian Peninsula",
-    climate: "Warm, dry climates",
-    sunlight: "Full sun to partial shade",
-    soil: "Sandy, well-drained soil",
-    partsUsed: ["Leaves (gel and latex)"],
-    activeCompounds: ["Aloin", "Aloesin", "Acemannan"],
-    therapeuticProperties: ["Anti-inflammatory", "Moisturizing", "Wound-healing"],
-    dosageForms: ["Gel", "Juice", "Capsules"],
-    ayushApplications: {
-      ayurveda: "Used for wound healing, skin diseases, and digestive disorders",
-      unani: "Used as a purgative and liver tonic",
-      siddha: "Used for burns, skin rejuvenation, and ulcers"
-    },
-    healthBenefits: [
-      "Promotes skin healing and soothes burns",
-      "Aids in digestion and relieves constipation",
-      "Enhances immune response and detoxification"
-    ],
-    image: "/images/aloe-vera.jpg",
-    category: "Burns & Wounds"
+  'sacred-fig': {
+    id: 1,
+    name: 'Sacred Fig (Peepal Tree)',
+    scientificName: 'Ficus religiosa',
+    category: ['Skin Cleansing', 'Detoxification', 'Anti-aging', 'Acne Control', 'Skin Tightening'],
+    image: '/images/plants/sacred-fig.jpg',
+    description: 'A sacred tree known for its medicinal properties in traditional healing practices.',
+    size: 'Large tree, 20-30 meters',
+    nativeRegion: 'Indian subcontinent',
+    climate: 'Tropical to subtropical',
+    sunlight: 'Full sun to partial shade',
+    soil: 'Well-drained, fertile soil',
+    partsUsed: ['Bark', 'Leaves', 'Fruits'],
+    activeCompounds: ['Tannins', 'Flavonoids', 'Sterols'],
+    therapeuticProperties: ['Astringent', 'Anti-inflammatory', 'Antioxidant'],
+    dosageForms: ['Decoction', 'Powder', 'Paste'],
+    ayushApplications: ['Ayurvedic skin treatments', 'Traditional healing practices'],
+    healthBenefits: ['Skin purification', 'Anti-aging properties', 'Acne treatment']
   },
-  "2": {
-    id: "2",
-    name: "Turmeric",
-    scientificName: "Curcuma longa",
-    size: "3–4 feet tall",
-    nativeRegion: "South Asia (especially India)",
-    climate: "Tropical climates",
-    sunlight: "Full sun",
-    soil: "Fertile, well-drained soil",
-    partsUsed: ["Rhizome (root)"],
-    activeCompounds: ["Curcumin", "Turmerone"],
-    therapeuticProperties: ["Anti-inflammatory", "Antioxidant", "Antimicrobial"],
-    dosageForms: ["Powder", "Capsules", "Tincture"],
-    ayushApplications: {
-      ayurveda: "Used to purify blood, improve digestion, and treat skin disorders",
-      unani: "Used for liver ailments and wound healing",
-      siddha: "Used for anti-inflammatory treatment and skin issues"
-    },
-    healthBenefits: [
-      "Reduces inflammation and joint pain",
-      "Boosts skin health and complexion",
-      "Enhances liver function and detoxification"
-    ],
-    image: "/images/turmeric.jpg",
-    category: "General Skincare"
+  'mexican-poppy': {
+    id: 2,
+    name: 'Mexican Poppy',
+    scientificName: 'Argemone mexicana',
+    category: ['Skin Conditioning', 'Emollient', 'Softening', 'Smoothing'],
+    image: '/images/plants/mexican-poppy.jpg',
+    description: 'A flowering plant known for its skin conditioning properties.',
+    size: 'Herbaceous plant, 30-100 cm',
+    nativeRegion: 'Mexico and Central America',
+    climate: 'Tropical to temperate',
+    sunlight: 'Full sun',
+    soil: 'Well-drained, sandy soil',
+    partsUsed: ['Seeds', 'Leaves', 'Flowers'],
+    activeCompounds: ['Alkaloids', 'Fixed oils', 'Proteins'],
+    therapeuticProperties: ['Emollient', 'Skin conditioning', 'Moisturizing'],
+    dosageForms: ['Oil', 'Paste', 'Extract'],
+    ayushApplications: ['Traditional skin care', 'Ayurvedic formulations'],
+    healthBenefits: ['Skin softening', 'Moisturizing', 'Skin smoothing']
   },
-  "3": {
-    id: "3",
-    name: "Neem",
-    scientificName: "Azadirachta indica",
-    size: "50–65 feet tall",
-    nativeRegion: "Indian subcontinent",
-    climate: "Tropical and subtropical climates",
-    sunlight: "Full sun",
-    soil: "Well-drained sandy or clay soils",
-    partsUsed: ["Leaves", "Bark", "Seeds"],
-    activeCompounds: ["Azadirachtin", "Nimbin"],
-    therapeuticProperties: ["Antibacterial", "Antifungal", "Antiparasitic"],
-    dosageForms: ["Oil", "Capsules", "Powders"],
-    ayushApplications: {
-      ayurveda: "Used for treating skin diseases and blood purification",
-      unani: "Used for anti-inflammatory and antiseptic purposes",
-      siddha: "Used for treating ulcers and skin infections"
-    },
-    healthBenefits: [
-      "Supports skin health and acne treatment",
-      "Enhances oral hygiene and dental care",
-      "Boosts immune system against infections"
-    ],
-    image: "/images/neem.jpg",
-    category: "Acne"
+  'indian-madder': {
+    id: 3,
+    name: 'Indian Madder (Manjistha)',
+    scientificName: 'Rubia cordifolia',
+    category: ['Antioxidant', 'Hyperpigmentation', 'Skin Brightening', 'Anti-aging'],
+    image: '/images/plants/indian-madder.jpg',
+    description: 'A climbing plant known for its skin brightening and anti-aging properties.',
+    size: 'Climbing vine, 1-2 meters',
+    nativeRegion: 'Indian subcontinent',
+    climate: 'Tropical to subtropical',
+    sunlight: 'Partial shade',
+    soil: 'Well-drained, loamy soil',
+    partsUsed: ['Roots', 'Stems', 'Leaves'],
+    activeCompounds: ['Anthraquinones', 'Glycosides', 'Tannins'],
+    therapeuticProperties: ['Antioxidant', 'Skin brightening', 'Anti-aging'],
+    dosageForms: ['Powder', 'Paste', 'Extract'],
+    ayushApplications: ['Ayurvedic skin care', 'Traditional beauty treatments'],
+    healthBenefits: ['Skin brightening', 'Hyperpigmentation treatment', 'Anti-aging effects']
   },
-  "4": {
-    id: "4",
-    name: "Calendula",
-    scientificName: "Calendula officinalis",
-    size: "12–24 inches tall",
-    nativeRegion: "Mediterranean region",
-    climate: "Temperate climates",
-    sunlight: "Full sun",
-    soil: "Well-drained, moderately fertile soil",
-    partsUsed: ["Flowers"],
-    activeCompounds: ["Flavonoids", "Triterpenoids"],
-    therapeuticProperties: ["Anti-inflammatory", "Wound healing", "Antimicrobial"],
-    dosageForms: ["Ointments", "Tinctures", "Teas"],
-    ayushApplications: {
-      ayurveda: "Used for wound healing and skin irritation"
-    },
-    healthBenefits: [
-      "Accelerates wound healing",
-      "Reduces skin inflammation and irritation",
-      "Protects against infections and boosts skin repair"
-    ],
-    image: "/images/calendula.jpg",
-    category: "Skin Health"
+  'mango-ginger': {
+    id: 4,
+    name: 'Mango Ginger',
+    scientificName: 'Curcuma amada',
+    category: ['Antimicrobial', 'Anti-inflammatory', 'Acne Treatment', 'Detoxification'],
+    image: '/images/plants/mango-ginger.jpg',
+    description: 'A rhizomatous herb known for its antimicrobial and anti-inflammatory properties.',
+    size: 'Herbaceous plant, 60-90 cm',
+    nativeRegion: 'Indian subcontinent',
+    climate: 'Tropical',
+    sunlight: 'Partial shade',
+    soil: 'Well-drained, rich soil',
+    partsUsed: ['Rhizome', 'Leaves'],
+    activeCompounds: ['Curcumin', 'Essential oils', 'Antioxidants'],
+    therapeuticProperties: ['Antimicrobial', 'Anti-inflammatory', 'Detoxifying'],
+    dosageForms: ['Powder', 'Paste', 'Extract'],
+    ayushApplications: ['Ayurvedic skin treatments', 'Traditional healing'],
+    healthBenefits: ['Acne treatment', 'Skin purification', 'Inflammation reduction']
   },
-  "5": {
-    id: "5",
-    name: "Sandalwood",
-    scientificName: "Santalum album",
-    size: "12–20 feet tall",
-    nativeRegion: "Southern India, Indonesia, Australia",
-    climate: "Tropical and subtropical climates",
-    sunlight: "Full sun to partial shade",
-    soil: "Well-drained, slightly alkaline soil",
-    partsUsed: ["Heartwood", "Oil"],
-    activeCompounds: ["Santalol", "β-santalol"],
-    therapeuticProperties: ["Anti-inflammatory", "Antimicrobial", "Calming"],
-    dosageForms: ["Essential oil", "Powder", "Paste"],
-    ayushApplications: {
-      ayurveda: "Used for cooling effect, treating skin inflammation, and mental relaxation",
-      unani: "Used for fever, headache, and skin diseases"
-    },
-    healthBenefits: [
-      "Promotes healthy, glowing skin",
-      "Provides stress relief and enhances mental clarity",
-      "Reduces inflammation and treats minor wounds"
-    ],
-    image: "/images/sandalwood.jpg",
-    category: "Skin Health"
+  'black-nightshade': {
+    id: 5,
+    name: 'Black Nightshade',
+    scientificName: 'Solanum nigrum',
+    category: ['Skin Diseases', 'Scabies', 'Ringworm', 'Vitiligo', 'Anti-inflammatory'],
+    image: '/images/plants/black-nightshade.jpg',
+    description: 'A medicinal plant known for treating various skin conditions.',
+    size: 'Herbaceous plant, 30-60 cm',
+    nativeRegion: 'Eurasia',
+    climate: 'Temperate to tropical',
+    sunlight: 'Full sun to partial shade',
+    soil: 'Well-drained, fertile soil',
+    partsUsed: ['Leaves', 'Fruits', 'Stems'],
+    activeCompounds: ['Alkaloids', 'Glycosides', 'Steroids'],
+    therapeuticProperties: ['Anti-inflammatory', 'Antimicrobial', 'Skin healing'],
+    dosageForms: ['Paste', 'Juice', 'Extract'],
+    ayushApplications: ['Traditional skin treatments', 'Ayurvedic formulations'],
+    healthBenefits: ['Skin disease treatment', 'Scabies relief', 'Vitiligo management']
   },
-  "6": {
-    id: "6",
-    name: "Saffron",
-    scientificName: "Crocus sativus",
-    size: "4–6 inches tall",
-    nativeRegion: "Southwest Asia (especially Iran, Kashmir)",
-    climate: "Temperate climate with dry summers",
-    sunlight: "Full sun",
-    soil: "Well-drained, rich loamy soil",
-    partsUsed: ["Stigmas (threads)"],
-    activeCompounds: ["Crocin", "Safranal"],
-    therapeuticProperties: ["Antidepressant", "Antioxidant", "Neuroprotective"],
-    dosageForms: ["Dried threads", "Powder", "Extract"],
-    ayushApplications: {
-      ayurveda: "Used to enhance complexion and as a mood enhancer",
-      unani: "Used for liver support and respiratory health"
-    },
-    healthBenefits: [
-      "Improves mood and reduces symptoms of depression",
-      "Enhances skin brightness and complexion",
-      "Supports cognitive function and memory"
-    ],
-    image: "/images/saffron.jpg",
-    category: "Skin Health"
+  'comfrey': {
+    id: 6,
+    name: 'Comfrey',
+    scientificName: 'Symphytum officinale',
+    category: ['Healing', 'Scar Reduction', 'Hydration', 'Anti-aging'],
+    image: '/images/plants/comfrey.jpg',
+    description: 'A healing herb known for its wound healing and scar reduction properties.',
+    size: 'Herbaceous plant, 60-120 cm',
+    nativeRegion: 'Europe and Asia',
+    climate: 'Temperate',
+    sunlight: 'Partial shade',
+    soil: 'Moist, rich soil',
+    partsUsed: ['Leaves', 'Roots'],
+    activeCompounds: ['Allantoin', 'Rosmarinic acid', 'Mucilage'],
+    therapeuticProperties: ['Healing', 'Scar reducing', 'Moisturizing'],
+    dosageForms: ['Ointment', 'Poultice', 'Extract'],
+    ayushApplications: ['Traditional healing', 'Ayurvedic wound care'],
+    healthBenefits: ['Wound healing', 'Scar reduction', 'Skin hydration']
   },
-  "7": {
-    id: "7",
-    name: "Gotu Kola",
-    scientificName: "Centella asiatica",
-    size: "2–6 inches tall",
-    nativeRegion: "Asia and South Pacific Islands",
-    climate: "Tropical and subtropical regions",
-    sunlight: "Partial shade to full sun",
-    soil: "Moist, well-drained soil",
-    partsUsed: ["Leaves", "Whole plant"],
-    activeCompounds: ["Triterpenoids", "Asiaticoside"],
-    therapeuticProperties: ["Wound healing", "Anti-inflammatory", "Cognitive enhancement"],
-    dosageForms: ["Capsules", "Tinctures", "Topical preparations"],
-    ayushApplications: {
-      ayurveda: "Used for skin conditions, mental clarity, and longevity",
-      siddha: "Used for skin diseases and mental disorders"
-    },
-    healthBenefits: [
-      "Promotes wound healing and skin repair",
-      "Reduces inflammation and scarring",
-      "Improves circulation and skin health"
-    ],
-    image: "/images/gotu-kola.jpg",
-    category: "Skin Health"
+  'indigo': {
+    id: 7,
+    name: 'Indigo',
+    scientificName: 'Indigofera tinctoria',
+    category: ['Skin Brightening', 'Pigmentation Reduction', 'Anti-inflammatory', 'Antioxidant'],
+    image: '/images/plants/indigo.jpg',
+    description: 'A plant known for its skin brightening and pigmentation reduction properties.',
+    size: 'Shrub, 1-2 meters',
+    nativeRegion: 'Indian subcontinent',
+    climate: 'Tropical to subtropical',
+    sunlight: 'Full sun',
+    soil: 'Well-drained, sandy soil',
+    partsUsed: ['Leaves', 'Stems'],
+    activeCompounds: ['Indigo', 'Indirubin', 'Flavonoids'],
+    therapeuticProperties: ['Skin brightening', 'Anti-inflammatory', 'Antioxidant'],
+    dosageForms: ['Paste', 'Powder', 'Extract'],
+    ayushApplications: ['Ayurvedic skin care', 'Traditional beauty treatments'],
+    healthBenefits: ['Skin brightening', 'Pigmentation reduction', 'Inflammation relief']
   },
-  "8": {
-    id: "8",
-    name: "Echinacea",
-    scientificName: "Echinacea purpurea",
-    size: "2–4 feet tall",
-    nativeRegion: "North America",
-    climate: "Temperate regions",
-    sunlight: "Full sun",
-    soil: "Well-drained, rich soil",
-    partsUsed: ["Roots", "Flowers", "Leaves"],
-    activeCompounds: ["Alkamides", "Polysaccharides"],
-    therapeuticProperties: ["Immunostimulant", "Anti-inflammatory", "Antimicrobial"],
-    dosageForms: ["Tinctures", "Capsules", "Teas"],
-    ayushApplications: {
-      ayurveda: "Adopted for immune support and skin health"
-    },
-    healthBenefits: [
-      "Boosts immune system function",
-      "Reduces inflammation",
-      "Supports skin healing and repair"
-    ],
-    image: "/images/echinacea.jpg",
-    category: "Skin Health"
+  'oregon-grape': {
+    id: 8,
+    name: 'Oregon Grape',
+    scientificName: 'Mahonia aquifolium',
+    category: ['Acne Treatment', 'Antimicrobial', 'Psoriasis Relief'],
+    image: '/images/plants/oregon-grape.jpg',
+    description: 'A medicinal plant known for its acne treatment and psoriasis relief properties.',
+    size: 'Shrub, 1-2 meters',
+    nativeRegion: 'North America',
+    climate: 'Temperate',
+    sunlight: 'Partial shade',
+    soil: 'Well-drained, acidic soil',
+    partsUsed: ['Roots', 'Bark', 'Leaves'],
+    activeCompounds: ['Berberine', 'Alkaloids', 'Flavonoids'],
+    therapeuticProperties: ['Antimicrobial', 'Anti-inflammatory', 'Skin healing'],
+    dosageForms: ['Tincture', 'Extract', 'Ointment'],
+    ayushApplications: ['Traditional skin treatments', 'Ayurvedic formulations'],
+    healthBenefits: ['Acne treatment', 'Psoriasis relief', 'Skin purification']
   },
-  "9": {
-    id: "9",
-    name: "Holy Basil",
-    scientificName: "Ocimum sanctum",
-    size: "1–2 feet tall",
-    nativeRegion: "Indian subcontinent",
-    climate: "Tropical and subtropical regions",
-    sunlight: "Full sun to partial shade",
-    soil: "Well-drained, fertile soil",
-    partsUsed: ["Leaves", "Seeds", "Whole plant"],
-    activeCompounds: ["Eugenol", "Ursolic acid"],
-    therapeuticProperties: ["Adaptogenic", "Anti-inflammatory", "Antimicrobial"],
-    dosageForms: ["Fresh leaves", "Dried powder", "Tea"],
-    ayushApplications: {
-      ayurveda: "Used for skin diseases, stress relief, and purification",
-      siddha: "Used for skin infections and respiratory conditions"
-    },
-    healthBenefits: [
-      "Treats acne and skin infections",
-      "Reduces stress and anxiety",
-      "Supports overall skin health"
-    ],
-    image: "/images/holy-basil.jpg",
-    category: "Skin Health"
+  'hemp-seed-oil': {
+    id: 9,
+    name: 'Hemp Seed Oil',
+    scientificName: 'Cannabis sativa',
+    category: ['Eczema Relief', 'Hydration', 'Skin Barrier Strengthening'],
+    image: '/images/plants/hemp-seed-oil.jpg',
+    description: 'A natural oil known for its skin barrier strengthening and eczema relief properties.',
+    size: 'Annual plant, 1-3 meters',
+    nativeRegion: 'Central Asia',
+    climate: 'Temperate',
+    sunlight: 'Full sun',
+    soil: 'Well-drained, fertile soil',
+    partsUsed: ['Seeds'],
+    activeCompounds: ['Omega-3', 'Omega-6', 'Gamma-linolenic acid'],
+    therapeuticProperties: ['Moisturizing', 'Skin barrier strengthening', 'Anti-inflammatory'],
+    dosageForms: ['Oil', 'Cream', 'Serum'],
+    ayushApplications: ['Ayurvedic skin care', 'Traditional healing'],
+    healthBenefits: ['Eczema relief', 'Skin hydration', 'Barrier function improvement']
   },
-  "10": {
-    id: "10",
-    name: "Nettles",
-    scientificName: "Urtica dioica",
-    size: "3–7 feet tall",
-    nativeRegion: "Europe, Asia, North America",
-    climate: "Temperate regions",
-    sunlight: "Full sun to partial shade",
-    soil: "Rich, moist soil",
-    partsUsed: ["Leaves", "Roots"],
-    activeCompounds: ["Flavonoids", "Minerals", "Vitamins"],
-    therapeuticProperties: ["Anti-inflammatory", "Nutritive", "Blood purifying"],
-    dosageForms: ["Tea", "Capsules", "Tinctures"],
-    ayushApplications: {
-      ayurveda: "Used for skin conditions and blood purification",
-      unani: "Used for treating skin disorders"
-    },
-    healthBenefits: [
-      "Improves skin conditions",
-      "Reduces inflammation",
-      "Supports hair growth"
-    ],
-    image: "/images/nettles.jpg",
-    category: "Skin Health"
+  'nettles': {
+    id: 10,
+    name: 'Nettles',
+    scientificName: 'Urtica dioica',
+    category: ['Eczema Treatment', 'Detoxification', 'Inflammation Reduction'],
+    image: '/images/plants/nettles.jpg',
+    description: 'A medicinal plant known for its eczema treatment and detoxification properties.',
+    size: 'Herbaceous plant, 60-150 cm',
+    nativeRegion: 'Europe and Asia',
+    climate: 'Temperate',
+    sunlight: 'Partial shade',
+    soil: 'Moist, rich soil',
+    partsUsed: ['Leaves', 'Stems', 'Roots'],
+    activeCompounds: ['Histamine', 'Serotonin', 'Flavonoids'],
+    therapeuticProperties: ['Anti-inflammatory', 'Detoxifying', 'Skin healing'],
+    dosageForms: ['Tea', 'Extract', 'Ointment'],
+    ayushApplications: ['Traditional healing', 'Ayurvedic skin care'],
+    healthBenefits: ['Eczema treatment', 'Skin detoxification', 'Inflammation reduction']
   },
-  "11": {
-    id: "11",
-    name: "Hemp Seed Oil",
-    scientificName: "Cannabis sativa",
-    size: "4–15 feet tall (parent plant)",
-    nativeRegion: "Central Asia",
-    climate: "Temperate to subtropical",
-    sunlight: "Full sun",
-    soil: "Well-drained, nutrient-rich soil",
-    partsUsed: ["Seeds"],
-    activeCompounds: ["Essential fatty acids", "Omega-3", "Omega-6"],
-    therapeuticProperties: ["Anti-inflammatory", "Moisturizing", "Nutritive"],
-    dosageForms: ["Oil", "Capsules", "Topical preparations"],
-    ayushApplications: {
-      ayurveda: "Used for skin nourishment and inflammation"
-    },
-    healthBenefits: [
-      "Moisturizes and nourishes skin",
-      "Reduces inflammation",
-      "Balances oil production"
-    ],
-    image: "/images/hemp-seed-oil.jpg",
-    category: "Skin Health"
+  'holy-basil': {
+    id: 11,
+    name: 'Holy Basil (Tulsi)',
+    scientificName: 'Ocimum sanctum',
+    category: ['Antibacterial', 'Acne Treatment', 'Skin Purification'],
+    image: '/images/plants/holy-basil.jpg',
+    description: 'A sacred herb known for its antibacterial and skin purification properties.',
+    size: 'Herbaceous plant, 30-60 cm',
+    nativeRegion: 'Indian subcontinent',
+    climate: 'Tropical',
+    sunlight: 'Full sun to partial shade',
+    soil: 'Well-drained, fertile soil',
+    partsUsed: ['Leaves', 'Stems', 'Seeds'],
+    activeCompounds: ['Eugenol', 'Ocimene', 'Caryophyllene'],
+    therapeuticProperties: ['Antibacterial', 'Antioxidant', 'Skin purifying'],
+    dosageForms: ['Tea', 'Extract', 'Paste'],
+    ayushApplications: ['Ayurvedic skin care', 'Traditional healing'],
+    healthBenefits: ['Acne treatment', 'Skin purification', 'Antibacterial protection']
   },
-  "12": {
-    id: "12",
-    name: "Oregon Grape",
-    scientificName: "Mahonia aquifolium",
-    size: "3–6 feet tall",
-    nativeRegion: "North America",
-    climate: "Temperate regions",
-    sunlight: "Partial to full shade",
-    soil: "Well-drained, acidic soil",
-    partsUsed: ["Root", "Bark"],
-    activeCompounds: ["Berberine", "Alkaloids"],
-    therapeuticProperties: ["Antimicrobial", "Anti-inflammatory", "Antifungal"],
-    dosageForms: ["Tinctures", "Topical preparations", "Tea"],
-    ayushApplications: {
-      ayurveda: "Adopted for skin conditions and infections"
-    },
-    healthBenefits: [
-      "Treats psoriasis and eczema",
-      "Reduces inflammation",
-      "Fights bacterial infections"
-    ],
-    image: "/images/oregon-grape.jpg",
-    category: "Skin Health"
+  'echinacea': {
+    id: 12,
+    name: 'Echinacea',
+    scientificName: 'Echinacea purpurea',
+    category: ['Anti-inflammatory', 'Acne Relief'],
+    image: '/images/plants/echinacea.jpg',
+    description: 'A medicinal plant known for its anti-inflammatory and acne relief properties.',
+    size: 'Herbaceous plant, 60-120 cm',
+    nativeRegion: 'North America',
+    climate: 'Temperate',
+    sunlight: 'Full sun',
+    soil: 'Well-drained, sandy soil',
+    partsUsed: ['Roots', 'Flowers', 'Leaves'],
+    activeCompounds: ['Alkamides', 'Polysaccharides', 'Flavonoids'],
+    therapeuticProperties: ['Anti-inflammatory', 'Immune boosting', 'Skin healing'],
+    dosageForms: ['Tincture', 'Extract', 'Cream'],
+    ayushApplications: ['Traditional healing', 'Ayurvedic formulations'],
+    healthBenefits: ['Acne relief', 'Inflammation reduction', 'Skin healing']
   },
-  "13": {
-    id: "13",
-    name: "Indigo",
-    scientificName: "Indigofera tinctoria",
-    size: "2–3 feet tall",
-    nativeRegion: "South Asia",
-    climate: "Tropical and subtropical",
-    sunlight: "Full sun",
-    soil: "Well-drained, sandy loam",
-    partsUsed: ["Leaves", "Root"],
-    activeCompounds: ["Indirubin", "Tryptanthrin"],
-    therapeuticProperties: ["Anti-inflammatory", "Antimicrobial", "Cooling"],
-    dosageForms: ["Powder", "Oil", "Paste"],
-    ayushApplications: {
-      ayurveda: "Used for skin diseases and inflammation",
-      unani: "Treatment of skin disorders and wounds"
-    },
-    healthBenefits: [
-      "Treats skin infections",
-      "Reduces inflammation",
-      "Soothes burns and scalds"
-    ],
-    image: "/images/indigo.jpg",
-    category: "Skin Health"
+  'gotu-kola': {
+    id: 13,
+    name: 'Gotu Kola',
+    scientificName: 'Centella asiatica',
+    category: ['Wound Healing', 'Scar Reduction', 'Sensitive Skin Care'],
+    image: '/images/plants/gotu-kola.jpg',
+    description: 'A medicinal herb known for its wound healing and scar reduction properties.',
+    size: 'Creeping herb, 10-20 cm',
+    nativeRegion: 'Asia',
+    climate: 'Tropical to subtropical',
+    sunlight: 'Partial shade',
+    soil: 'Moist, rich soil',
+    partsUsed: ['Leaves', 'Stems'],
+    activeCompounds: ['Asiaticoside', 'Madecassoside', 'Centelloside'],
+    therapeuticProperties: ['Wound healing', 'Scar reducing', 'Skin regenerating'],
+    dosageForms: ['Extract', 'Cream', 'Ointment'],
+    ayushApplications: ['Ayurvedic skin care', 'Traditional healing'],
+    healthBenefits: ['Wound healing', 'Scar reduction', 'Sensitive skin care']
   },
-  "14": {
-    id: "14",
-    name: "Comfrey",
-    scientificName: "Symphytum officinale",
-    size: "2–4 feet tall",
-    nativeRegion: "Europe",
-    climate: "Temperate regions",
-    sunlight: "Full sun to partial shade",
-    soil: "Rich, moist soil",
-    partsUsed: ["Leaves", "Root"],
-    activeCompounds: ["Allantoin", "Rosmarinic acid"],
-    therapeuticProperties: ["Wound healing", "Anti-inflammatory", "Cell proliferant"],
-    dosageForms: ["Ointment", "Poultice", "Cream"],
-    ayushApplications: {
-      ayurveda: "Adopted for wound healing and skin repair"
-    },
-    healthBenefits: [
-      "Accelerates wound healing",
-      "Reduces inflammation",
-      "Promotes skin cell regeneration"
-    ],
-    image: "/images/comfrey.jpg",
-    category: "Skin Health"
+  'saffron': {
+    id: 14,
+    name: 'Saffron',
+    scientificName: 'Crocus sativus',
+    category: ['Radiance Enhancement', 'Pigmentation Reduction'],
+    image: '/images/plants/saffron.jpg',
+    description: 'A precious spice known for its radiance enhancement and pigmentation reduction properties.',
+    size: 'Herbaceous plant, 20-30 cm',
+    nativeRegion: 'Greece and Southwest Asia',
+    climate: 'Mediterranean',
+    sunlight: 'Full sun',
+    soil: 'Well-drained, sandy soil',
+    partsUsed: ['Stigmas'],
+    activeCompounds: ['Crocin', 'Safranal', 'Picrocrocin'],
+    therapeuticProperties: ['Skin brightening', 'Antioxidant', 'Anti-inflammatory'],
+    dosageForms: ['Powder', 'Extract', 'Face mask'],
+    ayushApplications: ['Ayurvedic beauty treatments', 'Traditional skin care'],
+    healthBenefits: ['Skin radiance', 'Pigmentation reduction', 'Complexion improvement']
   },
-  "15": {
-    id: "15",
-    name: "Black Nightshade",
-    scientificName: "Solanum nigrum",
-    size: "1–2 feet tall",
-    nativeRegion: "Worldwide",
-    climate: "Temperate to tropical",
-    sunlight: "Full sun to partial shade",
-    soil: "Well-drained, fertile soil",
-    partsUsed: ["Leaves", "Berries"],
-    activeCompounds: ["Solanine", "Solasodine"],
-    therapeuticProperties: ["Anti-inflammatory", "Analgesic", "Antiseptic"],
-    dosageForms: ["Paste", "Juice", "Poultice"],
-    ayushApplications: {
-      ayurveda: "Used for skin diseases and inflammation",
-      unani: "Treatment of skin disorders"
-    },
-    healthBenefits: [
-      "Treats skin infections",
-      "Reduces inflammation",
-      "Soothes skin irritation"
-    ],
-    image: "/images/black-nightshade.jpg",
-    category: "Skin Health"
+  'sandalwood': {
+    id: 15,
+    name: 'Sandalwood',
+    scientificName: 'Santalum album',
+    category: ['Complexion Improvement', 'Cooling Effect', 'Anti-aging'],
+    image: '/images/plants/sandalwood.jpg',
+    description: 'A precious wood known for its complexion improvement and cooling properties.',
+    size: 'Tree, 8-20 meters',
+    nativeRegion: 'Indian subcontinent',
+    climate: 'Tropical',
+    sunlight: 'Full sun',
+    soil: 'Well-drained, sandy soil',
+    partsUsed: ['Heartwood', 'Bark', 'Leaves'],
+    activeCompounds: ['Santalol', 'Santalene', 'Alpha-santalol'],
+    therapeuticProperties: ['Cooling', 'Anti-inflammatory', 'Antimicrobial'],
+    dosageForms: ['Powder', 'Oil', 'Paste'],
+    ayushApplications: ['Ayurvedic beauty treatments', 'Traditional skin care'],
+    healthBenefits: ['Complexion improvement', 'Cooling effect', 'Anti-aging properties']
   },
-  "16": {
-    id: "16",
-    name: "Mango Ginger",
-    scientificName: "Curcuma amada",
-    size: "2–3 feet tall",
-    nativeRegion: "South Asia",
-    climate: "Tropical",
-    sunlight: "Partial shade",
-    soil: "Rich, well-drained soil",
-    partsUsed: ["Rhizome"],
-    activeCompounds: ["Curcuminoids", "Essential oils"],
-    therapeuticProperties: ["Anti-inflammatory", "Antioxidant", "Antimicrobial"],
-    dosageForms: ["Paste", "Powder", "Oil"],
-    ayushApplications: {
-      ayurveda: "Used for skin brightening and inflammation",
-      unani: "Treatment of skin disorders"
-    },
-    healthBenefits: [
-      "Brightens skin complexion",
-      "Reduces inflammation",
-      "Treats skin infections"
-    ],
-    image: "/images/mango-ginger.jpg",
-    category: "Skin Health"
+  'calendula': {
+    id: 16,
+    name: 'Calendula',
+    scientificName: 'Calendula officinalis',
+    category: ['Healing Properties', 'Anti-inflammatory'],
+    image: '/images/plants/calendula.jpg',
+    description: 'A healing flower known for its wound healing and anti-inflammatory properties.',
+    size: 'Herbaceous plant, 30-60 cm',
+    nativeRegion: 'Mediterranean',
+    climate: 'Temperate',
+    sunlight: 'Full sun',
+    soil: 'Well-drained, fertile soil',
+    partsUsed: ['Flowers', 'Leaves'],
+    activeCompounds: ['Flavonoids', 'Carotenoids', 'Triterpenes'],
+    therapeuticProperties: ['Healing', 'Anti-inflammatory', 'Antimicrobial'],
+    dosageForms: ['Ointment', 'Cream', 'Oil'],
+    ayushApplications: ['Traditional healing', 'Ayurvedic skin care'],
+    healthBenefits: ['Wound healing', 'Inflammation reduction', 'Skin soothing']
   },
-  "17": {
-    id: "17",
-    name: "Indian Madder",
-    scientificName: "Rubia cordifolia",
-    size: "Climbing vine",
-    nativeRegion: "South Asia",
-    climate: "Tropical and subtropical",
-    sunlight: "Full sun to partial shade",
-    soil: "Well-drained soil",
-    partsUsed: ["Root", "Stem"],
-    activeCompounds: ["Alizarin", "Purpurin"],
-    therapeuticProperties: ["Anti-inflammatory", "Antimicrobial", "Blood purifying"],
-    dosageForms: ["Powder", "Decoction", "Paste"],
-    ayushApplications: {
-      ayurveda: "Used for skin diseases and blood purification",
-      unani: "Treatment of skin disorders and blood conditions"
-    },
-    healthBenefits: [
-      "Treats skin diseases",
-      "Purifies blood",
-      "Reduces inflammation"
-    ],
-    image: "/images/indian-madder.jpg",
-    category: "Skin Health"
+  'neem': {
+    id: 17,
+    name: 'Neem',
+    scientificName: 'Azadirachta indica',
+    category: ['Antibacterial', 'Acne Treatment'],
+    image: '/images/plants/neem.jpg',
+    description: 'A medicinal tree known for its antibacterial and acne treatment properties.',
+    size: 'Tree, 15-20 meters',
+    nativeRegion: 'Indian subcontinent',
+    climate: 'Tropical',
+    sunlight: 'Full sun',
+    soil: 'Well-drained, sandy soil',
+    partsUsed: ['Leaves', 'Bark', 'Seeds'],
+    activeCompounds: ['Azadirachtin', 'Nimbin', 'Nimbidin'],
+    therapeuticProperties: ['Antibacterial', 'Antimicrobial', 'Anti-inflammatory'],
+    dosageForms: ['Powder', 'Oil', 'Paste'],
+    ayushApplications: ['Ayurvedic skin care', 'Traditional healing'],
+    healthBenefits: ['Acne treatment', 'Skin purification', 'Antibacterial protection']
   },
-  "18": {
-    id: "18",
-    name: "Mexican Poppy",
-    scientificName: "Argemone mexicana",
-    size: "2–4 feet tall",
-    nativeRegion: "Mexico, now worldwide",
-    climate: "Tropical and subtropical",
-    sunlight: "Full sun",
-    soil: "Sandy, well-drained soil",
-    partsUsed: ["Seeds", "Leaves", "Latex"],
-    activeCompounds: ["Berberine", "Protopine"],
-    therapeuticProperties: ["Antimicrobial", "Anti-inflammatory", "Analgesic"],
-    dosageForms: ["Oil", "Paste", "Poultice"],
-    ayushApplications: {
-      ayurveda: "Used for skin diseases and wounds",
-      unani: "Treatment of skin infections"
-    },
-    healthBenefits: [
-      "Treats skin infections",
-      "Heals wounds",
-      "Reduces inflammation"
-    ],
-    image: "/images/mexican-poppy.jpg",
-    category: "Skin Health"
+  'turmeric': {
+    id: 18,
+    name: 'Turmeric',
+    scientificName: 'Curcuma longa',
+    category: ['Brightening Effect', 'Anti-inflammatory'],
+    image: '/images/plants/turmeric.jpg',
+    description: 'A medicinal root known for its brightening and anti-inflammatory properties.',
+    size: 'Herbaceous plant, 60-90 cm',
+    nativeRegion: 'Indian subcontinent',
+    climate: 'Tropical',
+    sunlight: 'Partial shade',
+    soil: 'Well-drained, rich soil',
+    partsUsed: ['Rhizome'],
+    activeCompounds: ['Curcumin', 'Essential oils', 'Antioxidants'],
+    therapeuticProperties: ['Anti-inflammatory', 'Antioxidant', 'Skin brightening'],
+    dosageForms: ['Powder', 'Paste', 'Extract'],
+    ayushApplications: ['Ayurvedic skin care', 'Traditional beauty treatments'],
+    healthBenefits: ['Skin brightening', 'Inflammation reduction', 'Complexion improvement']
   },
-  "19": {
-    id: "19",
-    name: "Sacred Fig",
-    scientificName: "Ficus religiosa",
-    size: "Large tree (50–100 feet tall)",
-    nativeRegion: "Indian subcontinent",
-    climate: "Tropical and subtropical",
-    sunlight: "Full sun",
-    soil: "Well-drained, fertile soil",
-    partsUsed: ["Bark", "Leaves", "Latex"],
-    activeCompounds: ["Flavonoids", "Tannins"],
-    therapeuticProperties: ["Anti-inflammatory", "Antimicrobial", "Wound healing"],
-    dosageForms: ["Paste", "Powder", "Decoction"],
-    ayushApplications: {
-      ayurveda: "Used for skin diseases and wound healing",
-      unani: "Treatment of skin disorders and wounds"
-    },
-    healthBenefits: [
-      "Heals wounds",
-      "Treats skin diseases",
-      "Reduces inflammation"
-    ],
-    image: "/images/sacred-fig.jpg",
-    category: "Skin Health"
+  'aloe-vera': {
+    id: 19,
+    name: 'Aloe Vera',
+    scientificName: 'Aloe barbadensis',
+    category: ['Hydration Boosting Properties'],
+    image: '/images/plants/aloe-vera.jpg',
+    description: 'A succulent plant known for its exceptional hydrating properties.',
+    size: 'Succulent plant, 30-60 cm',
+    nativeRegion: 'Arabian Peninsula',
+    climate: 'Tropical to subtropical',
+    sunlight: 'Full sun to partial shade',
+    soil: 'Well-drained, sandy soil',
+    partsUsed: ['Gel', 'Leaves'],
+    activeCompounds: ['Aloin', 'Acemannan', 'Vitamins'],
+    therapeuticProperties: ['Hydrating', 'Healing', 'Soothing'],
+    dosageForms: ['Gel', 'Juice', 'Cream'],
+    ayushApplications: ['Ayurvedic skin care', 'Traditional healing'],
+    healthBenefits: ['Skin hydration', 'Wound healing', 'Skin soothing']
   }
-} 
+};
