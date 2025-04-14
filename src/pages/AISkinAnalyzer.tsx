@@ -23,33 +23,21 @@ const AISkinAnalyzer = () => {
     }
   };
 
-  const handleAnalyze = async () => {
+  const handleAnalyze = () => {
     setIsAnalyzing(true);
-    try {
-      const formData = new FormData();
-      const blob = await fetch(selectedImage).then(r => r.blob());
-      formData.append('image', blob);
-
-      const response = await fetch('http://localhost:3001/api/analyze-skin', {
-        method: 'POST',
-        body: formData,
+    // Simulate API call
+    setTimeout(() => {
+      setAnalysisResult({
+        skinType: "Combination",
+        concerns: ["Acne", "Hyperpigmentation"],
+        recommendations: [
+          "Use gentle cleansers",
+          "Apply non-comedogenic moisturizers",
+          "Consider using products with salicylic acid",
+        ],
       });
-
-      if (!response.ok) {
-        throw new Error('Analysis failed');
-      }
-
-      const result = await response.json();
-      setAnalysisResult(result);
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to analyze skin. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
       setIsAnalyzing(false);
-    }
+    }, 2000);
   };
 
   return (
