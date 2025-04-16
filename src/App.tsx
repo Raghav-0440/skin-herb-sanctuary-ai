@@ -1,3 +1,4 @@
+import React from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -32,6 +33,7 @@ const App = () => {
             <Route path="/chatbot" element={<Chatbot />} />
             <Route path="/get-started" element={<Placeholder />} />
             <Route path="/search" element={<Placeholder />} />
+            <Route path="/skin-analysis" element={<AISkinAnalyzer />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Router>

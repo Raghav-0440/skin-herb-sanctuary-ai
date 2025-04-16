@@ -135,105 +135,89 @@ const Chatbot = () => {
   // Simple mock response generator
   const generateBotResponse = (query: string, previousMessages: Message[] = []): Message => {
     const lowerQuery = query.toLowerCase();
-    const responses: string[] = [];
+    let response = "";
     
-    // Get context from previous messages
-    const context = previousMessages.map(m => m.text).join(' ');
+    // Extract concerns from the query
+    const concerns = extractConcerns(query);
     
-    // Extract concerns from the query and context
-    const concerns = extractConcerns(query + ' ' + context);
-    
-    // Check if user mentioned previous treatments didn't work
-    const previousTreatmentsFailed = context.includes("didn't work") || context.includes("didnt work");
-    
-    // Handle questions about herbs for specific conditions
-    if (lowerQuery.includes("herbs") && lowerQuery.includes("acne")) {
-      responses.push("Here are effective herbs for acne treatment:\n\n" + 
+    // Handle different types of queries
+    if (lowerQuery.includes('dark circles') || lowerQuery.includes('under eye')) {
+      response = "For treating dark circles with herbs, here are effective natural remedies:\n\n" +
         formatResponse([
-          "Tea Tree Oil: Powerful antibacterial and anti-inflammatory properties",
-          "Neem: Natural antiseptic and anti-inflammatory herb",
-          "Turmeric: Reduces inflammation and prevents breakouts",
-          "Aloe Vera: Soothes irritation and promotes healing",
-          "Green Tea: Rich in antioxidants and reduces inflammation",
-          "Honey: Natural antibacterial and healing properties",
-          "Chamomile: Calms redness and irritation",
-          "Lavender: Balances oil production and reduces inflammation",
-          "Basil: Natural antibacterial and anti-inflammatory",
-          "Mint: Soothes irritation and controls oil production"
-        ]));
+          "Cucumber: Place cool cucumber slices on eyes for 10-15 minutes",
+          "Green Tea Bags: Apply cooled tea bags to reduce puffiness",
+          "Potato Slices: Natural bleaching properties help lighten dark circles",
+          "Aloe Vera: Apply pure gel around eyes for hydration",
+          "Rose Water: Use as a gentle toner to brighten under-eye area",
+          "Chamomile Tea: Use cooled tea bags to reduce inflammation",
+          "Mint Leaves: Crush and apply for cooling effect"
+        ]);
     }
-    
-    // Handle specific symptoms and failed treatments
-    else if (concerns.includes("acne") && (context.includes("redness") || context.includes("itching"))) {
-      if (previousTreatmentsFailed) {
-        responses.push("Since neem didn't work for your acne with redness and itching, here are alternative approaches:\n\n" + 
-          formatResponse([
-            "For Redness and Itching:",
-            "Aloe Vera Gel: Apply fresh gel directly to soothe irritation",
-            "Chamomile Tea: Use cooled tea as a toner to calm redness",
-            "Honey Mask: Apply raw honey for 15 minutes to reduce inflammation",
-            "",
-            "Alternative Acne Treatments:",
-            "Tea Tree Oil: Dilute with coconut oil (1:10 ratio), apply twice daily",
-            "Turmeric Mask: Mix with honey, apply for 15 minutes",
-            "Green Tea Toner: Brew strong tea, cool, and apply with cotton pad",
-            "",
-            "General Care:",
-            "Use gentle, fragrance-free cleanser",
-            "Apply treatments with clean hands",
-            "Moisturize with non-comedogenic products",
-            "Avoid touching or picking at acne",
-            "Stay hydrated and maintain a healthy diet"
-          ]));
-      } else {
-        responses.push("For acne with redness and itching, here are recommended herbal treatments:\n\n" + 
-          formatResponse([
-            "Primary Treatments:",
-            "Aloe Vera: Apply fresh gel to soothe irritation",
-            "Chamomile: Use as a toner to calm redness",
-            "Tea Tree Oil: Dilute with carrier oil for spot treatment",
-            "",
-            "Supporting Care:",
-            "Use gentle, non-irritating cleanser",
-            "Apply treatments with clean hands",
-            "Moisturize with non-comedogenic products",
-            "Avoid touching or picking at acne",
-            "Stay hydrated and maintain a healthy diet"
-          ]));
-      }
-    }
-    
-    // Handle general questions about remedies
-    else if (lowerQuery.includes("remedies")) {
-      responses.push("Here are natural remedies for common skin concerns:\n\n" + 
+    else if (lowerQuery.includes('eczema')) {
+      response = "For treating eczema naturally, try these herbal remedies:\n\n" +
         formatResponse([
-          "Acne Treatment: Tea tree oil, neem, turmeric, aloe vera, honey",
-          "Dark Circles: Cucumber, potato, rose water, almond oil",
-          "Inflammation: Aloe vera, chamomile, green tea, cucumber",
-          "Dry Skin: Coconut oil, honey, avocado, oatmeal",
-          "Eczema: Oatmeal, coconut oil, aloe vera, chamomile",
-          "Anti-Aging: Green tea, aloe vera, honey, rose water",
-          "Sun Protection: Aloe vera, green tea, coconut oil",
-          "Scar Reduction: Aloe vera, honey, coconut oil",
-          "Oil Control: Tea tree oil, aloe vera, green tea",
-          "Sensitive Skin: Chamomile, aloe vera, coconut oil"
-        ]));
+          "Coconut Oil: Apply virgin coconut oil for moisturizing",
+          "Colloidal Oatmeal: Add to bath water to soothe skin",
+          "Calendula: Use cream or oil for anti-inflammatory benefits",
+          "Chamomile: Apply cooled tea as compress",
+          "Aloe Vera: Pure gel helps reduce inflammation",
+          "Evening Primrose Oil: Rich in gamma-linolenic acid",
+          "Neem: Natural antiseptic properties"
+        ]);
     }
-    
+    else if (concerns.includes('acne')) {
+      response = "For acne treatment, here are some effective herbal remedies:\n\n" +
+        formatResponse([
+          "Tea Tree Oil: Natural antibacterial properties, apply diluted",
+          "Neem: Powerful antimicrobial herb, use as face pack",
+          "Turmeric: Anti-inflammatory properties, mix with honey",
+          "Aloe Vera: Soothes inflammation and redness",
+          "Green Tea: Antioxidant-rich, use as toner",
+          "Holy Basil: Natural antibacterial properties",
+          "Calendula: Helps heal acne scars"
+        ]);
+    }
+    else if (concerns.includes('inflammation') || lowerQuery.includes('reduce inflammation')) {
+      response = "To reduce skin inflammation naturally:\n\n" +
+        formatResponse([
+          "Chamomile: Natural anti-inflammatory, use as compress",
+          "Green Tea: Rich in antioxidants, apply cooled tea",
+          "Calendula: Healing and calming properties",
+          "Aloe Vera: Cooling and soothing effect",
+          "Cucumber: Natural anti-inflammatory properties",
+          "Turmeric: Powerful anti-inflammatory herb",
+          "Licorice Root: Helps reduce redness"
+        ]);
+    }
+    else if (lowerQuery.includes('dry skin') || concerns.includes('drySkin')) {
+      response = "For dry skin, try these moisturizing herbs:\n\n" +
+        formatResponse([
+          "Aloe Vera: Deep hydration and soothing",
+          "Calendula: Healing and moisturizing",
+          "Chamomile: Calming and hydrating",
+          "Rose: Natural moisturizer",
+          "Honey: Natural humectant",
+          "Coconut Oil: Deep moisturizing properties",
+          "Shea Butter: Rich in fatty acids"
+        ]);
+    }
+    else if (lowerQuery.includes('hello') || lowerQuery.includes('hi')) {
+      response = "Hello! I'm your herbal skincare assistant. How can I help you with your skin concerns today?";
+    }
     else {
-      responses.push("To provide you with the most relevant advice, please share:\n\n" + 
+      response = "I understand you're looking for herbal skincare advice. Could you please specify your skin concern? For example:\n\n" +
         formatResponse([
-          "Your specific skin concern (acne, dryness, inflammation, etc.)",
-          "Current symptoms you're experiencing",
-          "Previous treatments you've tried",
-          "Any allergies or sensitivities",
-          "Your current skincare routine"
-        ]));
+          "Do you have acne?",
+          "Are you dealing with hyperpigmentation?",
+          "Is your skin dry or oily?",
+          "Are you experiencing redness or inflammation?",
+          "Would you like general skincare tips?"
+        ]);
     }
 
     return {
-      id: (Date.now() + 1).toString(),
-      text: responses.join("\n\n"),
+      id: Date.now().toString(),
+      text: response,
       sender: "bot",
       timestamp: new Date(),
     };
