@@ -43,7 +43,53 @@ const AISkinAnalyzer = () => {
     }
   };
 
-  const handleAnalyze = async () => {
+  const handleFileUpload = async (file: File) => {
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: "Error",
+        description: "Please upload an image file (JPG/PNG only).",
+        variant: "destructive",
+      });
+      return;
+    }
+  
+    if (file.size > 2 * 1024 * 1024) {
+      toast({
+        title: "Error",
+        description: "Image size should be less than 2MB.",
+        variant: "destructive",
+      });
+      return;
+    }
+  
+    const formData = new FormData();
+    formData.append('image', file);
+  
+    try {
+      const response = await fetch('http://localhost:3001/api/analyze-skin', {
+        method: 'POST',
+        body: formData,
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Unknown error occurred');
+      }
+  
+      const data = await response.json();
+      console.log('Skin analysis result:', data);
+      // Display results to the user
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
+  async function handleAnalyze() {
     if (!selectedImage) {
       toast({
         title: "Error",
@@ -62,11 +108,11 @@ const AISkinAnalyzer = () => {
       const base64Data = selectedImage.split(',')[1];
       const byteCharacters = atob(base64Data);
       const byteArrays = [];
-      
+
       for (let i = 0; i < byteCharacters.length; i++) {
         byteArrays.push(byteCharacters.charCodeAt(i));
       }
-      
+
       // Get and normalize file type
       const fileTypePart = selectedImage.split(';')[0].split('/')[1].toLowerCase();
       let fileType = fileTypePart === 'jpg' ? 'jpeg' : fileTypePart; // Normalize jpg to jpeg
@@ -78,7 +124,7 @@ const AISkinAnalyzer = () => {
         processedMimeType: mimeType,
         processedFileType: fileType
       });
-      
+
       // Create Blob with normalized MIME type
       const blob = new Blob([new Uint8Array(byteArrays)], { type: mimeType });
 
@@ -103,8 +149,14 @@ const AISkinAnalyzer = () => {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to analyze image. Please try again with a different image.');
+        let errorMessage = 'Failed to analyze image. Please try again with a different image.';
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.error || errorMessage;
+        } catch (jsonError) {
+          console.error('Error parsing error response:', jsonError);
+        }
+        throw new Error(errorMessage);
       }
 
       const data = await response.json();
@@ -120,7 +172,7 @@ const AISkinAnalyzer = () => {
     } finally {
       setIsAnalyzing(false);
     }
-  };
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
