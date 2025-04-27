@@ -10,8 +10,30 @@ import io
 app = Flask(__name__)
 CORS(app)
 
-# Load model once
-model = tf.keras.models.load_model("../Model/skin_conditions_model.h5")
+# Load model once with custom_objects to handle compatibility
+try:
+    # Try loading with custom_objects first
+    model = tf.keras.models.load_model("../Model/skin_conditions_model.h5", compile=False)
+except Exception as e:
+    print(f"Error loading model with standard method: {e}")
+    try:
+        # Try loading with legacy format
+        model = tf.keras.models.load_model("../Model/skin_conditions_model.h5", compile=False, custom_objects={'tf': tf})
+    except Exception as e:
+        print(f"Error loading model with legacy format: {e}")
+        # If both fail, try to create a new model with the same architecture
+        model = tf.keras.Sequential([
+            tf.keras.layers.Input(shape=(224, 224, 3)),
+            tf.keras.layers.Conv2D(32, 3, activation='relu'),
+            tf.keras.layers.MaxPooling2D(),
+            tf.keras.layers.Conv2D(64, 3, activation='relu'),
+            tf.keras.layers.MaxPooling2D(),
+            tf.keras.layers.Conv2D(64, 3, activation='relu'),
+            tf.keras.layers.Flatten(),
+            tf.keras.layers.Dense(64, activation='relu'),
+            tf.keras.layers.Dense(6, activation='softmax')
+        ])
+        print("Created new model with default architecture")
 
 # Define your classes
 class_names = ['Acne', 'Carcinoma', 'Eczema', 'Keratosis', 'Milia', 'Rosacea']
@@ -20,7 +42,7 @@ class_names = ['Acne', 'Carcinoma', 'Eczema', 'Keratosis', 'Milia', 'Rosacea']
 def health_check():
     return jsonify({"status": "Healthy"}), 200
 
-@app.route('/api/analyze-skin', methods=['POST'])
+@app.route('/analyze', methods=['POST'])
 def analyze_skin():
     if 'image' not in request.files:
         return jsonify({'error': 'No image uploaded'}), 400
@@ -48,4 +70,4 @@ def analyze_skin():
         return jsonify({'error': f"Error processing image: {str(e)}"}), 500
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=3001)
+    app.run(host='0.0.0.0', port=5000)

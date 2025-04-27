@@ -3,31 +3,32 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const { analyzeSkin } = require('./controllers/skinAnalysisController');
+const { analyzeSkin, getAnalysisResult } = require('./controllers/skinAnalysisController');
+const morgan = require('morgan');
+const path = require('path');
+const skinAnalysisRoutes = require('./routes/skinAnalysisRoutes');
+
+// Initialize global prediction results storage
+global.predictionResults = {};
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Request logging middleware
-app.use((req, res, next) => {
-  console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
-  next();
-});
-
-// CORS middleware
+// Middleware
+app.use(morgan('dev')); // Logging
 app.use(cors({
   origin: '*', // Allow all origins for testing; restrict in production
   methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Accept'],
   credentials: true
 }));
-
-// Increase payload size limit
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
 
 // Routes
 app.post('/api/analyze-skin', analyzeSkin);
+app.get('/api/analysis-result/:requestId', getAnalysisResult);
+app.use('/api/skin-analysis', skinAnalysisRoutes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -52,13 +53,38 @@ app.use((err, req, res, next) => {
   });
 });
 
+// Handle 404 errors
+app.use((req, res) => {
+  res.status(404).json({
+    status: 'error',
+    message: 'Route not found'
+  });
+});
+
 // Start server
 const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server is running on http://localhost:${PORT}`);
   console.log(`Health check available at http://localhost:${PORT}/health`);
+  console.log(`Skin analysis API available at http://localhost:${PORT}/api/skin-analysis`);
 });
 
 // Handle server errors
 server.on('error', (error) => {
   console.error('Server error:', error);
 });
+
+// Handle uncaught exceptions
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err);
+  // Give the server time to finish handling requests before shutting down
+  setTimeout(() => {
+    process.exit(1);
+  }, 1000);
+});
+
+// Handle unhandled promise rejections
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
+module.exports = app;

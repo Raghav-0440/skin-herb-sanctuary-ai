@@ -142,7 +142,7 @@ const AISkinAnalyzer = () => {
         throw new Error('Backend server is not available. Please make sure the server is running.');
       }
 
-      // Make the API call
+      // Make the API call to submit the image
       const response = await fetch('http://127.0.0.1:3001/api/analyze-skin', {
         method: 'POST',
         body: formData,
@@ -160,7 +160,15 @@ const AISkinAnalyzer = () => {
       }
 
       const data = await response.json();
-      setAnalysisResult(data);
+      console.log('Image submitted for processing:', data);
+      
+      // If we got a request ID, start polling for results
+      if (data.request_id) {
+        // Start polling for results
+        pollForResults(data.request_id);
+      } else {
+        throw new Error('No request ID received from server');
+      }
     } catch (error) {
       console.error('Error:', error);
       setError(error.message);
@@ -169,10 +177,69 @@ const AISkinAnalyzer = () => {
         description: error.message || 'Error analyzing skin. Please try again.',
         variant: "destructive",
       });
-    } finally {
       setIsAnalyzing(false);
     }
   }
+
+  // Function to poll for results
+  const pollForResults = async (requestId: string) => {
+    let attempts = 0;
+    const maxAttempts = 30; // 30 attempts * 2 seconds = 60 seconds max wait time
+    
+    const pollInterval = setInterval(async () => {
+      try {
+        attempts++;
+        console.log(`Polling for results (attempt ${attempts}/${maxAttempts})...`);
+        
+        const response = await fetch(`http://127.0.0.1:3001/api/analysis-result/${requestId}`);
+        
+        if (!response.ok) {
+          throw new Error('Failed to get analysis results');
+        }
+        
+        const data = await response.json();
+        console.log('Poll response:', data);
+        
+        if (data.status === 'success') {
+          // We got a successful result
+          clearInterval(pollInterval);
+          setAnalysisResult(data);
+          setIsAnalyzing(false);
+        } else if (data.status === 'error') {
+          // We got an error
+          clearInterval(pollInterval);
+          setError(data.error || 'Error analyzing skin');
+          toast({
+            title: "Error",
+            description: data.error || 'Error analyzing skin. Please try again.',
+            variant: "destructive",
+          });
+          setIsAnalyzing(false);
+        } else if (attempts >= maxAttempts) {
+          // We've reached the maximum number of attempts
+          clearInterval(pollInterval);
+          setError('Analysis timed out. Please try again.');
+          toast({
+            title: "Timeout",
+            description: 'Analysis timed out. Please try again.',
+            variant: "destructive",
+          });
+          setIsAnalyzing(false);
+        }
+        // If status is 'pending' or 'processing', continue polling
+      } catch (error) {
+        console.error('Error polling for results:', error);
+        clearInterval(pollInterval);
+        setError('Error checking analysis results. Please try again.');
+        toast({
+          title: "Error",
+          description: 'Error checking analysis results. Please try again.',
+          variant: "destructive",
+        });
+        setIsAnalyzing(false);
+      }
+    }, 2000); // Poll every 2 seconds
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
