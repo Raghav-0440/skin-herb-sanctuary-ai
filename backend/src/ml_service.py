@@ -41,7 +41,7 @@ class_names = ['Acne', 'Carcinoma', 'Eczema', 'Keratosis', 'Milia', 'Rosacea']
 # Global model variable
 model = None
 
-def load_model():
+def load_trained_model():
     """Load the trained model"""
     global model
     try:
@@ -58,9 +58,28 @@ def load_model():
         model_size = os.path.getsize(model_path) / (1024 * 1024)  # Size in MB
         logger.info(f"Model file size: {model_size:.2f} MB")
         
-        # Load the model directly
-        model = load_model(model_path)
+        # Try loading with basic settings first
+        try:
+            model = tf.keras.models.load_model(model_path, compile=False)
+        except Exception as e:
+            logger.warning(f"Basic loading failed: {str(e)}")
+            # If basic loading fails, try with minimal custom objects
+            model = tf.keras.models.load_model(
+                model_path,
+                compile=False,
+                custom_objects={
+                    'tf': tf,
+                    'InputLayer': tf.keras.layers.InputLayer,
+                    'Model': tf.keras.Model,
+                    'Sequential': tf.keras.Sequential
+                }
+            )
+        
         logger.info("Model loaded successfully")
+        
+        # Validate model weights
+        weights = model.get_weights()
+        logger.info(f"Model weights shape: {[w.shape for w in weights]}")
         
         # Test model with random input
         logger.info("\nTesting model with random input...")
@@ -68,6 +87,11 @@ def load_model():
         test_pred = model.predict(test_input, verbose=0)
         logger.info(f"Test prediction shape: {test_pred.shape}")
         logger.info(f"Test prediction sum: {np.sum(test_pred)}")  # Should be close to 1.0
+        
+        # Log predictions for each class
+        logger.info("\nTest predictions for each class:")
+        for class_name, prob in zip(class_names, test_pred[0]):
+            logger.info(f"{class_name}: {prob:.4f}")
         
         return model
     except Exception as e:
@@ -107,7 +131,7 @@ def process_image(image_path, request_id):
         logger.info(f"Image value range: [{img_array.min():.2f}, {img_array.max():.2f}]")
         
         # Load model (will use cached version if already loaded)
-        model = load_model()
+        model = load_trained_model()
         
         # Make prediction
         logger.info("Making prediction...")
@@ -132,6 +156,23 @@ def process_image(image_path, request_id):
         
         logger.info(f"\nFinal prediction: {predicted_class}")
         logger.info(f"Confidence: {confidence:.4f}")
+        
+        # Validate predictions
+        if confidence < 0.5:  # If confidence is too low
+            logger.warning("Low confidence prediction. Checking model weights...")
+            # Check if model weights are loaded correctly
+            weights = model.get_weights()
+            logger.info(f"Model weights shape: {[w.shape for w in weights]}")
+            
+            # Test with a known image if available
+            test_image_path = os.path.join(os.path.dirname(__file__), '..', 'test_images', 'test.jpg')
+            if os.path.exists(test_image_path):
+                logger.info("Testing with known image...")
+                test_img = preprocess_image(test_image_path)
+                test_pred = model.predict(test_img, verbose=1)
+                logger.info("Test image predictions:")
+                for class_name, prob in zip(class_names, test_pred[0]):
+                    logger.info(f"{class_name}: {prob:.4f}")
         
         # Store results
         result = {
@@ -394,10 +435,10 @@ class MLServiceHandler(BaseHTTPRequestHandler):
                 # Generate request ID
                 request_id = str(uuid.uuid4())
                 
-                # Add to processing queue
-                result = add_to_queue(request_id, image_path)
+                # Directly process the image and get the result
+                result = process_image(image_path, request_id)
                 
-                # Return response
+                # Return the result to the frontend
                 self.send_response(200)
                 self._send_cors_headers()
                 self.send_header('Content-type', 'application/json')
@@ -405,7 +446,7 @@ class MLServiceHandler(BaseHTTPRequestHandler):
                 self.wfile.write(json.dumps({
                     'status': 'success',
                     'request_id': request_id,
-                    'message': 'Image uploaded successfully'
+                    'result': result
                 }).encode())
                 
             except Exception as e:

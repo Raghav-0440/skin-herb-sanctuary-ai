@@ -115,60 +115,42 @@ const AISkinAnalyzer = () => {
 
       // Get and normalize file type
       const fileTypePart = selectedImage.split(';')[0].split('/')[1].toLowerCase();
-      let fileType = fileTypePart === 'jpg' ? 'jpeg' : fileTypePart; // Normalize jpg to jpeg
+      let fileType = fileTypePart === 'jpg' ? 'jpeg' : fileTypePart;
       const mimeType = `image/${fileType}`;
-
-      // Log file details for debugging
-      console.log('File processing details:', {
-        originalBase64Header: selectedImage.split(';')[0],
-        processedMimeType: mimeType,
-        processedFileType: fileType
-      });
 
       // Create Blob with normalized MIME type
       const blob = new Blob([new Uint8Array(byteArrays)], { type: mimeType });
 
-      // Verify Blob creation
-      if (blob.size === 0) {
-        throw new Error('Failed to create valid file blob');
-      }
-
       const formData = new FormData();
       formData.append('image', blob, `skin-image.${fileType}`);
 
-      // First check if backend is available
-      const healthCheck = await fetch('http://127.0.0.1:3001/health');
-      if (!healthCheck.ok) {
-        throw new Error('Backend server is not available. Please make sure the server is running.');
-      }
-
       // Make the API call to submit the image
-      const response = await fetch('http://127.0.0.1:3001/api/analyze-skin', {
+      const response = await fetch('http://localhost:3001/api/analyze-skin', {
         method: 'POST',
         body: formData,
       });
 
       if (!response.ok) {
-        let errorMessage = 'Failed to analyze image. Please try again with a different image.';
-        try {
-          const errorData = await response.json();
-          errorMessage = errorData.error || errorMessage;
-        } catch (jsonError) {
-          console.error('Error parsing error response:', jsonError);
-        }
-        throw new Error(errorMessage);
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to analyze image');
       }
 
       const data = await response.json();
-      console.log('Image submitted for processing:', data);
+      console.log('Raw analysis result:', data);
       
-      // If we got a request ID, start polling for results
-      if (data.request_id) {
-        // Start polling for results
-        pollForResults(data.request_id);
-      } else {
-        throw new Error('No request ID received from server');
-      }
+      // Format the response data to match the expected structure
+      const formattedResult = {
+        predicted_class: data.result.predicted_class || data.predicted_class,
+        confidence: data.result.confidence || data.confidence,
+        top3_predictions: data.result.top3_predictions || data.top3_predictions || [
+          { class: data.result.predicted_class || data.predicted_class, probability: data.result.confidence || data.confidence }
+        ]
+      };
+      
+      console.log('Formatted result:', formattedResult);
+      setAnalysisResult(formattedResult);
+      setIsAnalyzing(false);
+      
     } catch (error) {
       console.error('Error:', error);
       setError(error.message);
@@ -239,6 +221,96 @@ const AISkinAnalyzer = () => {
         setIsAnalyzing(false);
       }
     }, 2000); // Poll every 2 seconds
+  };
+
+  const get_recommendations = (condition: string) => {
+    const recommendations = {
+      'Acne': {
+        plants: [
+          { plant: 'Tea Tree', benefit: 'Natural antiseptic properties help reduce inflammation and bacteria' },
+          { plant: 'Aloe Vera', benefit: 'Soothes inflammation and promotes healing' },
+          { plant: 'Neem', benefit: 'Antibacterial and anti-inflammatory properties' }
+        ],
+        homeRemedies: [
+          { remedy: 'Honey Mask', benefit: 'Natural antibacterial properties help fight acne' },
+          { remedy: 'Green Tea Compress', benefit: 'Reduces inflammation and soothes skin' },
+          { remedy: 'Apple Cider Vinegar', benefit: 'Helps balance skin pH and reduce bacteria' }
+        ]
+      },
+      'Eczema': {
+        plants: [
+          { plant: 'Chamomile', benefit: 'Calming properties help reduce inflammation' },
+          { plant: 'Oatmeal', benefit: 'Soothes itching and irritation' },
+          { plant: 'Calendula', benefit: 'Anti-inflammatory and healing properties' }
+        ],
+        homeRemedies: [
+          { remedy: 'Coconut Oil', benefit: 'Natural moisturizer with anti-inflammatory properties' },
+          { remedy: 'Oatmeal Bath', benefit: 'Soothes itching and irritation' },
+          { remedy: 'Aloe Vera Gel', benefit: 'Cooling and healing properties' }
+        ]
+      },
+      'Rosacea': {
+        plants: [
+          { plant: 'Green Tea', benefit: 'Anti-inflammatory properties help reduce redness' },
+          { plant: 'Chamomile', benefit: 'Calming properties help reduce inflammation' },
+          { plant: 'Licorice Root', benefit: 'Helps reduce redness and inflammation' }
+        ],
+        homeRemedies: [
+          { remedy: 'Green Tea Compress', benefit: 'Reduces inflammation and redness' },
+          { remedy: 'Honey Mask', benefit: 'Natural anti-inflammatory properties' },
+          { remedy: 'Aloe Vera Gel', benefit: 'Cooling and soothing properties' }
+        ]
+      },
+      'Keratosis': {
+        plants: [
+          { plant: 'Tea Tree Oil', benefit: 'Natural exfoliating properties' },
+          { plant: 'Apple Cider Vinegar', benefit: 'Helps soften and remove keratosis' },
+          { plant: 'Aloe Vera', benefit: 'Promotes skin healing and regeneration' }
+        ],
+        homeRemedies: [
+          { remedy: 'Apple Cider Vinegar', benefit: 'Natural exfoliant that helps remove keratosis' },
+          { remedy: 'Coconut Oil', benefit: 'Moisturizes and softens skin' },
+          { remedy: 'Salicylic Acid', benefit: 'Helps remove keratosis gently' }
+        ]
+      },
+      'Milia': {
+        plants: [
+          { plant: 'Tea Tree Oil', benefit: 'Natural astringent properties' },
+          { plant: 'Witch Hazel', benefit: 'Helps tighten pores and reduce milia' },
+          { plant: 'Aloe Vera', benefit: 'Promotes skin healing' }
+        ],
+        homeRemedies: [
+          { remedy: 'Steam Treatment', benefit: 'Opens pores and helps remove milia' },
+          { remedy: 'Honey Mask', benefit: 'Natural exfoliant and antibacterial properties' },
+          { remedy: 'Retinol', benefit: 'Promotes skin cell turnover' }
+        ]
+      },
+      'Carcinoma': {
+        plants: [
+          { plant: 'Green Tea', benefit: 'Antioxidant properties may help protect skin' },
+          { plant: 'Turmeric', benefit: 'Anti-inflammatory properties' },
+          { plant: 'Aloe Vera', benefit: 'Promotes skin healing' }
+        ],
+        homeRemedies: [
+          { remedy: 'Regular Skin Checks', benefit: 'Early detection is crucial' },
+          { remedy: 'Sun Protection', benefit: 'Use SPF and protective clothing' },
+          { remedy: 'Consult Dermatologist', benefit: 'Professional medical advice is essential' }
+        ]
+      }
+    };
+
+    return recommendations[condition] || {
+      plants: [
+        { plant: 'Aloe Vera', benefit: 'General skin healing and soothing properties' },
+        { plant: 'Green Tea', benefit: 'Antioxidant properties for skin health' },
+        { plant: 'Chamomile', benefit: 'Calming and anti-inflammatory properties' }
+      ],
+      homeRemedies: [
+        { remedy: 'Regular Moisturizing', benefit: 'Maintains skin health' },
+        { remedy: 'Sun Protection', benefit: 'Prevents skin damage' },
+        { remedy: 'Healthy Diet', benefit: 'Supports skin health from within' }
+      ]
+    };
   };
 
   return (
@@ -329,60 +401,48 @@ const AISkinAnalyzer = () => {
               <Card className="mt-8">
                 <CardHeader>
                   <CardTitle className="text-2xl font-bold text-white">
-                    Natural Skin Analysis
+                    Skin Analysis Results
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div>
                     <h3 className="text-lg font-semibold mb-2 text-herb">
-                      Skin Type
+                      Predicted Condition
                     </h3>
-                    <p className="text-gray-300">{analysisResult.skinType}</p>
-                    
-                    {analysisResult.specialFeatures && analysisResult.specialFeatures.length > 0 && (
-                      <p className="text-gray-300 mt-1">
-                        <span className="font-medium">Special Features:</span> {analysisResult.specialFeatures.join(', ')}
-                      </p>
-                    )}
+                    <p className="text-gray-300">{analysisResult.predicted_class}</p>
+                    <p className="text-gray-300">Confidence: {(analysisResult.confidence * 100).toFixed(2)}%</p>
                   </div>
-                  
-                  {analysisResult.concerns.length > 0 ? (
-                    <div>
-                      <h3 className="text-lg font-semibold mb-2 text-herb">
-                        Areas to Address
-                      </h3>
-                      <ul className="list-disc list-inside text-gray-300">
-                        {analysisResult.concerns.map((concern) => (
-                          <li key={concern}>{concern}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ) : (
-                    <div>
-                      <h3 className="text-lg font-semibold mb-2 text-herb">
-                        Skin Analysis
-                      </h3>
-                      <p className="text-gray-300">Your skin appears healthy with no significant concerns.</p>
-                    </div>
-                  )}
-                  
+
+                  <div>
+                    <h3 className="text-lg font-semibold mb-2 text-herb">
+                      Top Predictions
+                    </h3>
+                    <ul className="list-disc list-inside text-gray-300">
+                      {analysisResult.top3_predictions.map((pred, index) => (
+                        <li key={index}>
+                          {pred.class}: {(pred.probability * 100).toFixed(2)}%
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
                   <div>
                     <h3 className="text-lg font-semibold mb-2 text-herb">
                       Recommended Medicinal Plants
                     </h3>
-                    {analysisResult.recommendations.plants.map((rec) => (
+                    {get_recommendations(analysisResult.predicted_class).plants.map((rec) => (
                       <div key={rec.plant} className="mb-2">
                         <p className="font-medium text-gray-200">{rec.plant}</p>
                         <p className="text-gray-300">{rec.benefit}</p>
                       </div>
                     ))}
                   </div>
-                  
+
                   <div>
                     <h3 className="text-lg font-semibold mb-2 text-herb">
                       Recommended Home Remedies
                     </h3>
-                    {analysisResult.recommendations.homeRemedies.map((rec) => (
+                    {get_recommendations(analysisResult.predicted_class).homeRemedies.map((rec) => (
                       <div key={rec.remedy} className="mb-2">
                         <p className="font-medium text-gray-200">{rec.remedy}</p>
                         <p className="text-gray-300">{rec.benefit}</p>
